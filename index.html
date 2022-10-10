@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Minesweeper</title>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <div id="container">
+            <div class="header">
+                <h1 class="title">MINESWEEPER</h1>
+                <div class="form-container">
+                    <form>
+                        <div>
+                            <p>Nickname</p>
+                            <input type="text" id="nickname" />
+                        </div>
+                        <div>
+                            <p>Width</p>
+                            <input type="number" id="width" />
+                        </div>
+                        <div>
+                            <p>Height</p>
+                            <input type="number" id="height" />
+                        </div>
+                        <div>
+                            <p>Mines</p>
+                            <input type="number" id="mines" />
+                        </div>
+                        <button type="button" id="updateBoard">Update</button>
+                    </form>
+                </div>
+            </div>
+            <div class="main">
+                <div id="scoreContainer"></div>
+                <div id="boardContainer"></div>
+            </div>
+        </div>
+        <script type="module" src="script/updateBoard.js"></script>
+    </body>
+</html>
