@@ -41,6 +41,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+    gap: 2em;
 }
 
 h1.title {
@@ -238,4 +239,11 @@ div.dimention {
 
 div.dimention > ol {
     list-style-position: inside;
+}
+
+#panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

@@ -1,37 +1,54 @@
 import Game from "./game.js";
 
-document.getElementById("updateBoard").addEventListener("click", () => {
-    let boardContainer = document.getElementById("boardContainer");
-    boardContainer.innerHTML = "";
-    let nickname = document.getElementById("nickname").value;
-    let height = document.getElementById("height").value;
-    let width = document.getElementById("width").value;
-    let mines = document.getElementById("mines").value;
+function disableElements(arr) {
+    arr.forEach((n) => {
+        n.disabled = true;
+    });
+}
+
+const updateBoard = document.getElementById("updateBoard");
+updateBoard.addEventListener("click", () => {
+    const boardContainer = document.getElementById("boardContainer");
+    const leftFlagsContainer = document.getElementById("leftFlagsContainer");
+    const sumContainer = document.getElementById("sumContainer");
+    const timerContainer = document.getElementById("timerContainer");
+    const nickname = document.getElementById("nickname");
+    const height = document.getElementById("height");
+    const width = document.getElementById("width");
+    const mines = document.getElementById("mines");
     let validInput = true;
 
-    if (!nickname || !height || !width || !mines) {
+    boardContainer.innerHTML = "";
+    leftFlagsContainer.innerHTML = "";
+    sumContainer.innerHTML = "";
+    timerContainer.innerHTML = "";
+
+    if (!nickname.value || !height.value || !width.value || !mines.value) {
         validInput = false;
     }
-    if (height < 0 || height > 100) {
+    if (height.value < 0 || height.value > 100) {
         validInput = false;
     }
-    if (width < 0 || width > 100) {
+    if (width.value < 0 || width.value > 100) {
         validInput = false;
     }
-    if (mines > height * width) {
+    if (mines.value > height.value * width.value) {
         validInput = false;
     }
 
     if (validInput) {
         const game = new Game(
             boardContainer,
-            document.getElementById("scoreContainer"),
-            nickname,
-            height,
-            width,
-            mines
+            leftFlagsContainer,
+            sumContainer,
+            timerContainer,
+            nickname.value,
+            height.value,
+            width.value,
+            mines.value
         );
         game.start();
+        disableElements([nickname, height, width, mines, updateBoard]);
     } else {
         boardContainer.innerHTML = "<p>Invalid input!</p>";
     }

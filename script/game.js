@@ -3,15 +3,19 @@ import Block from "./block.js";
 export default class Game {
     constructor(
         boardContainer,
-        pointsContainer,
+        leftFlagsContainer,
+        sumContainer,
+        timerContainer,
         nickname,
         height,
         width,
         mines
     ) {
         this.boardContainer = boardContainer;
-        this.pointsContainer = pointsContainer;
-        this.points = 0;
+        this.leftFlagsContainer = leftFlagsContainer;
+        this.sumContainer = sumContainer;
+        this.timerContainer = timerContainer;
+        this.sum = 0;
         this.nickname = nickname;
         this.height = height;
         this.width = width;
@@ -20,8 +24,9 @@ export default class Game {
             this.blocks.push([]);
         }
         this.mines = mines;
+        this.leftFlags = this.mines;
         this.coordsOfMines = [];
-        this.isActive = true;
+        this.isActive = false;
         this.startTime = new Date();
     }
 
@@ -30,8 +35,11 @@ export default class Game {
         this.fillBlocks();
         this.updateCount();
         this.updateType();
-        this.updatePoints();
+        this.updateLeftFlags();
+        this.updateSum();
+        this.updateTimer();
         this.createBoard();
+        this.isActive = true;
     }
 
     fillCoordsOfMines() {
@@ -112,8 +120,21 @@ export default class Game {
         }
     }
 
-    updatePoints() {
-        this.pointsContainer.innerText = "Points: " + this.points;
+    updateLeftFlags() {
+        this.leftFlagsContainer.innerHTML =
+            "<p>Flags: " + this.leftFlags + "</p>";
+    }
+
+    updateSum() {
+        this.sumContainer.innerHTML = "<p>Sum of points: " + this.sum + "</p>";
+    }
+
+    updateTimer() {
+        this.timerContainer.innerHTML =
+            "<p>Time: " + this.getGameTimeInMinutesAndSeconds() + "</p>";
+        this.timerInterval = setInterval(() => {
+            this.updateTimer();
+        }, 1000);
     }
 
     createBoard() {
@@ -169,7 +190,7 @@ export default class Game {
                 this.blocks[i][j].covered
             ) {
                 this.uncoverBlock(i, j);
-                this.updatePoints();
+                this.updateSum();
             }
             this.checkIfWin();
         }
@@ -182,6 +203,9 @@ export default class Game {
             this.blocks[i][j].type !== "red-mine" &&
             this.blocks[i][j].covered
         ) {
+            if (this.blocks[i][j].type === "flag") {
+                this.blocks[i][j].type = "type0";
+            }
             this.changeClassOfBlockToItsType(i, j, "closed");
             this.blocks[i][j].covered = false;
             try {
@@ -216,7 +240,7 @@ export default class Game {
         ) {
             this.changeClassOfBlockToItsType(i, j, "closed");
             this.blocks[i][j].covered = false;
-            this.points += this.blocks[i][j].count;
+            this.sum += this.blocks[i][j].count;
         }
     }
 
@@ -231,6 +255,8 @@ export default class Game {
         if (this.isActive && this.blocks[i][j].covered) {
             this.blocks[i][j].type = "flag";
             this.changeClassOfBlockToItsType(i, j, "closed");
+            this.leftFlags -= 1;
+            this.updateLeftFlags();
             this.checkIfWin();
         }
     }
@@ -245,23 +271,22 @@ export default class Game {
             }
             this.rows[i].childNodes[j].classList.remove("flag");
             this.rows[i].childNodes[j].classList.add("closed");
+            this.leftFlags += 1;
+            this.updateLeftFlags();
             this.checkIfWin();
         }
     }
 
     checkIfWin() {
-        let flagged_mines = 0;
+        let win = true;
         for (let i = 0; i < this.height; i++) {
             for (let j = 0; j < this.width; j++) {
-                if (
-                    this.blocks[i][j].is_mine &&
-                    this.blocks[i][j].type === "flag"
-                ) {
-                    flagged_mines += 1;
+                if (this.blocks[i][j].covered && !this.blocks[i][j].is_mine) {
+                    win = false;
                 }
             }
         }
-        if (parseInt(this.mines) === flagged_mines) {
+        if (win) {
             this.addCookie(
                 this.width + "x" + this.height + "x" + this.mines,
                 this.nickname,
@@ -350,9 +375,9 @@ export default class Game {
         dimension.innerText = `Dimension: ${this.width}x${this.height}x${this.mines}`;
         summary.appendChild(dimension);
 
-        let points = document.createElement("p");
-        points.innerText = `Points: ${this.points}`;
-        summary.appendChild(points);
+        let sum = document.createElement("p");
+        sum.innerText = `Sum of points: ${this.sum}`;
+        summary.appendChild(sum);
 
         let time = document.createElement("p");
         time.innerText = `Time: ${this.getGameTimeInMinutesAndSeconds()}`;
@@ -369,8 +394,8 @@ export default class Game {
 
         let dark = document.createElement("div");
         dark.classList.add("dark");
-        this.pointsContainer.appendChild(dark);
+        this.sumContainer.appendChild(dark);
 
-        this.pointsContainer.appendChild(summary);
+        this.sumContainer.appendChild(summary);
     }
 }
