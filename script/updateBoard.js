@@ -23,13 +23,16 @@ updateBoard.addEventListener("click", () => {
     sumContainer.innerHTML = "";
     timerContainer.innerHTML = "";
 
+    if (nickname.value.length > 20) {
+        validInput = false;
+    }
     if (!nickname.value || !height.value || !width.value || !mines.value) {
         validInput = false;
     }
-    if (height.value < 0 || height.value > 100) {
+    if (height.value <= 0 || height.value > 100) {
         validInput = false;
     }
-    if (width.value < 0 || width.value > 100) {
+    if (width.value <= 0 || width.value > 100) {
         validInput = false;
     }
     if (mines.value > height.value * width.value) {
